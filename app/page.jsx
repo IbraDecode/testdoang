@@ -5,17 +5,16 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [code, setCode] = useState('');
   const [fileName, setFileName] = useState('Tidak ada file dipilih');
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
-  const timerRef = useRef(null);
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setFileName(file.name);
@@ -32,12 +31,12 @@ export default function Home() {
 
     setIsGenerating(true);
     setProgress(0);
-
     let currentProgress = 0;
-    timerRef.current = setInterval(() => {
+
+    const timer = setInterval(() => {
       currentProgress += 10;
       if (currentProgress >= 100) {
-        clearInterval(timerRef.current);
+        clearInterval(timer);
         setIsGenerating(false);
         setProgress(100);
       } else {
@@ -131,13 +130,13 @@ export default function Home() {
 
 // Simulasi animasi mengetik kode
 function TypingAnimation({ code }) {
-  const lines = code.split('\n');
   const [visibleLines, setVisibleLines] = useState([]);
 
   useEffect(() => {
     setVisibleLines([]);
     let idx = 0;
     const interval = setInterval(() => {
+      const lines = code.split('\n');
       if (idx < lines.length) {
         setVisibleLines((prev) => [...prev, lines[idx]]);
         idx++;
@@ -147,7 +146,7 @@ function TypingAnimation({ code }) {
     }, 300);
 
     return () => clearInterval(interval);
-  }, [code, lines]);
+  }, [code]);
 
   return (
     <div>
